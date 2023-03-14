@@ -1,0 +1,2 @@
+const n=document.querySelector("#search-box"),t=document.querySelector(".country-list");document.querySelector(".country-info");function e(n){const e=n.map((n=>`<ul class="country-list">\n        <p>${n.flags} ${n.name}</p>\n        </ul>\n       `)).join("");t.innerHTML=e}n.addEventListener("input",(()=>{fetch("https://restcountries.com/v2/all?fields=flags,name,capital,population,flags.svg,languages").then((n=>{if(!n.ok)throw new Error(n.status);return n.json()})).then(e).catch((n=>console.log(n)))}));
+//# sourceMappingURL=index.1d7608ba.js.map
