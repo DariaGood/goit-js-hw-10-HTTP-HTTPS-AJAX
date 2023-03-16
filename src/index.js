@@ -1,76 +1,71 @@
 import './css/styles.css';
-import debounce from 'lodash.debounce';
 import { fetchCountries } from './fetchCountries.js';
+import debounce from 'lodash.debounce';
 import Notiflix from 'notiflix';
+
+
 const DEBOUNCE_DELAY = 300;
 
 const inputText = document.querySelector('#search-box');
 const listContries = document.querySelector('.country-list');
-const detailsCountry = document.querySelector('.country-info');
+let detailsCountry = document.querySelector('.country-info');
 
 inputText.addEventListener('input', debounce(onInput, DEBOUNCE_DELAY));
 
-function onInput (e) {
-    const inputCurrent = e.target.value.trim();
-    // if(!inputCurrent) {
-    //   clearTemplate();
-    // return;
-    // }
-
-      fetchCountries(inputCurrent)
-      .then(someCountries =>  {
-        if (someCountries.length > 10) {
-          Notiflix.Notify.warning("Too many matches found. Please enter a more specific name.");
-          clearTemplate();
+function onInput(e) {
+  const inputCurrent = e.target.value.trim();
+  if (!inputCurrent) {
+    clearCurrentValue();
     return;
+  }
+
+  fetchCountries(inputCurrent)
+    .then(someCountries => {
+      if (someCountries.length > 10) {
+        Notiflix.Notify.warning(
+          'Too many matches found. Please enter a more specific name.'
+        );
+        // clearCurrentValue();
+        return;
       }
       renderCountriesList(someCountries);
-      })
-      .catch((error) => {
-        Notiflix.Notify.failure(`Try again! ${error}`)
-      clearTemplate()
-})
+    })
+    .catch(error => {
+      Notiflix.Notify.failure(`Try again! ${error}`);
+      clearCurrentValue();
+    });
 }
 
 function renderCountriesList(countries) {
-  let info = '';
-  let refsTemplate = '';
-  clearTemplate();
+  let data;
+  let refs;
+  clearCurrentValue();
   if (countries.length === 1) {
-    info = getElemCountry(countries);
-    refsTemplate = detailsCountry;
+    data = getElemCountry(countries);
+    refs = detailsCountry;
   } else {
-    info = createTemplateItemList(countries);
-    refsTemplate = detailsCountry;
+    data = getListContries(countries);
+    refs = detailsCountry;
   }
-makeElemsContries(refsTemplate, info)
+  makeElemsContries(refs, data);
+}
 
-  //   const markup = countries
-  //     .map((country) => {
-  //       return `
-  //       <img
-  // src="${country.flag}"
-  // width="40"
-  // height="30"
-  // alt="${country.name}"/img>
-  //       <p>${country.name}</p>
-  //      `;
-  //     })
-  //     .join("");
-  //     listContries.innerHTML = markup;
-  }
+function makeElemsContries(detailsCountry, markup) {
+  detailsCountry.innerHTML = markup;
+}
 
 function getElemCountry(country) {
   return country.map(
-    ({ name, capital, population, flags, languages }) =>
-      `
-      <img
-        src="${flags.svg}" 
-        alt="${name.official}" 
-        width="120" 
-        height="80">
-      <p>${name.official}</p>
-      <ul>
+    ({ name, capital, population, flags, languages }) => `
+      <ul class ="country-info">
+          <li>
+            <img
+              src="${flags.svg}" 
+              alt="${name.official}" 
+              width="120" 
+              height="80">
+            <p>${name.official}</p>
+          </li>
           <li>
           <span>Capital:</span>
         ${capital}
@@ -88,7 +83,7 @@ function getElemCountry(country) {
   );
 }
 
-function createTemplateItemList(contries) {
+function getListContries(contries) {
   return contries
     .map(
       ({ name, flags }) => `
@@ -104,11 +99,7 @@ function createTemplateItemList(contries) {
     .join('');
 }
 
-function clearTemplate() {
+function clearCurrentValue() {
   detailsCountry.innerHTML = '';
   listContries.innerHTML = '';
-}
-
-function makeElemsContries(refs, markup) {
-  refs.innerHTML = markup;
 }
