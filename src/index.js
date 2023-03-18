@@ -3,6 +3,7 @@ import { fetchCountries } from './fetchCountries.js';
 import debounce from 'lodash.debounce';
 import Notiflix from 'notiflix';
 
+//document.querySelector('form').reset()
 
 const DEBOUNCE_DELAY = 300;
 
@@ -23,8 +24,7 @@ function onInput(e) {
     .then(someCountries => {
       if (someCountries.length > 10) {
         Notiflix.Notify.warning(
-          'Too many matches found. Please enter a more specific name.'
-        );
+          'Too many matches found. Please enter a more specific name.', 'warning');
         // clearCurrentValue();
         return;
       }
@@ -58,25 +58,25 @@ function getElemCountry(country) {
   return country.map(
     ({ name, capital, population, flags, languages }) => `
       <ul class ="country-info">
-          <li>
-            <img
-              src="${flags.svg}" 
-              alt="${name.official}" 
-              width="120" 
-              height="80">
-            <p>${name.official}</p>
+      <li class = "country-info__item">
+      <img
+      class = "country-title__flag"
+        src="${flags.svg}" 
+        alt="${name.official}" 
+        width="60" 
+        height="40">
+      <h1 class="country-name">${name.official}</h1>        
+          </li>
+      <li class = "country-info__item">
+          <p class= "country-info__item--description">Capital: ${capital}</p>
           </li>
           <li>
-          <span>Capital:</span>
-        ${capital}
+          <p class= "country-info__item--description">Population:  ${population}</p>
           </li>
           <li>
-          <span>Population:</span>
-          ${population}
-          </li>
-          <li>
-          <span>Languages:</span>
-          ${Object.values(languages)}
+          <p class= "country-info__item--description">Languages: ${Object.values(
+            languages
+          )}</p>
           </li>
       </ul>
   `
@@ -88,12 +88,12 @@ function getListContries(contries) {
     .map(
       ({ name, flags }) => `
       <li class="country-list__item">
-        <img class="country-list__img" 
+        <img class="country-title__flag" 
           src="${flags.svg}" 
           alt="${name.official}" 
           width="60" 
           height="40">
-        ${name.official}
+        <p>${name.official}</p>
       </li>`
     )
     .join('');
